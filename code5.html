@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cursor Technique Study</title>
+<script src="https://d3js.org/d3.v3.js"></script>
+<script src="https://cdn.jsdelivr.net/g/filesaver.js"></script>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+  }
+
+  /* ── Setup panel ──────────────────────────────────────────────────── */
+  #setup {
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 28px 32px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  #setup h2 {
+    margin: 0 0 6px 0;
+    font-size: 18px;
+    color: #222;
+  }
+
+  #setup .subtitle {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 22px;
+  }
+
+  #setup .field {
+    margin-bottom: 16px;
+  }
+
+  #setup label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    color: #444;
+    margin-bottom: 4px;
+  }
+
+  #setup .hint {
+    font-size: 11px;
+    color: #999;
+    margin-top: 3px;
+  }
+
+  #setup input {
+    width: 100%;
+    padding: 7px 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  #setup input:focus {
+    outline: none;
+    border-color: #4a90d9;
+  }
+
+  #setup .latin-info {
+    background: #f0f6ff;
+    border: 1px solid #c8dff5;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #336;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  #setup .latin-info strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #224;
+  }
+
+  #setup button {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    background: #3a7bd5;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #setup button:hover {
+    background: #2f68ba;
+  }
+
+  /* ── Study toolbar (visible during the study) ─────────────────────── */
+  #toolbar {
+    display: none;
+    padding: 6px 12px;
+    background: #222;
+    color: #ccc;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #toolbar span {
+    flex: 1;
+  }
+
+  #saveNowBtn {
+    display: none;
+    padding: 4px 14px;
+    font-size: 12px;
+    background: #555;
+    color: white;
+    border: 1px solid #888;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  #saveNowBtn:hover {
+    background: #333;
+  }
+
+  /* ── Canvas wrapper ───────────────────────────────────────────────── */
+  #canvas {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- Setup Form -->
+<div id="setup">
+  <h2>Cursor Technique Study</h2>
+  <p class="subtitle">3 × 3 × 3 within-subjects design — fully automated sequencing</p>
+
+  <div class="field">
+    <label for="participant">Participant Number</label>
+    <input type="number" id="participant" value="1" min="1">
+    <p class="hint">
+      Determines the Latin square row for technique block order.
+    </p>
+  </div>
+
+  <div class="latin-info" id="latinPreview">
+    <strong>Technique block order (Participant 1)</strong>
+    Row 0 → <b>BUBBLE → POINT → AREA</b><br>
+    Within each block: 9 movement × density conditions in randomised order.<br>
+    Total: 270 recorded trials across 27 conditions.
+  </div>
+
+  <div class="field">
+    <label for="famTrials">Familiarization Trials</label>
+    <input type="number" id="famTrials" value="15" min="0">
+    <p class="hint">
+      Practice trials with random conditions. Results not recorded.
+      Set to 0 to skip familiarization entirely.
+    </p>
+  </div>
+
+  <button onclick="startSession()">Start Session</button>
+</div>
+
+<!-- Save Now button — shown during study -->
+<div style="background:#222; padding:5px 12px; display:flex; align-items:center;"
+     id="studyBar" style="display:none">
+  <span style="flex:1; font-size:12px; color:#aaa;" id="studyBarLabel"></span>
+  <button id="saveNowBtn" onclick="saveNow()">💾 Save Now</button>
+</div>
+
+<!-- SVG canvas -->
+<div id="canvas"></div>
+
+<script src="app.js"></script>
+<script>
+  // Update the Latin square preview as participant number changes
+  var LATIN_SQUARE_PREVIEW = [
+    ["BUBBLE","POINT","AREA"],
+    ["POINT","AREA","BUBBLE"],
+    ["AREA","BUBBLE","POINT"]
+  ];
+  document.getElementById("participant").addEventListener("input", function() {
+    var p   = parseInt(this.value, 10) || 1;
+    var row = p % 3;
+    var order = LATIN_SQUARE_PREVIEW[row].join(" → ");
+    document.getElementById("latinPreview").innerHTML =
+      "<strong>Technique block order (Participant " + p + ")</strong>" +
+      "Row " + row + " → <b>" + order + "</b><br>" +
+      "Within each block: 9 movement × density conditions in randomised order.<br>" +
+      "Total: 270 recorded trials across 27 conditions.";
+  });
+</script>
+</body>
+</html>
