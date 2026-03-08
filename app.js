@@ -1,85 +1,3 @@
-// =====================================================================
-// app.js — Cursor Technique Study
-// =====================================================================
-//
-// README / OVERVIEW
-// ─────────────────
-// Full within-subjects cursor study: 3 (Technique) × 3 (Movement) × 3 (Clustering).
-//
-// TECHNIQUE:  BUBBLE | POINT | AREA
-// MOVEMENT:   STATIC | SLOW (linear ~30 px/s) | FAST (Catmull-Rom spline ~80 px/s)
-// CLUSTERING: LOW (20 targets) | MEDIUM (40 targets) | HIGH (80 targets, clustered)
-//
-// SEQUENCE GENERATION
-//   Technique block order: Latin square keyed on (participantNumber % 3).
-//     Row 0 → BUBBLE → POINT  → AREA
-//     Row 1 → POINT  → AREA   → BUBBLE
-//     Row 2 → AREA   → BUBBLE → POINT
-//   Within each technique block: the 9 (movement × clustering) conditions are
-//   independently re-randomised per participant and per block.
-//   Each condition: TRIALS_PER_CONDITION trials using the same target set.
-//   Total recorded trials: 3 × 9 × TRIALS_PER_CONDITION = 270 (default).
-//
-// FAMILIARIZATION
-//   Optional pre-study practice phase (default: FAM_TRIALS_DEFAULT = 15 trials).
-//   Each trial draws a random (technique × movement × clustering) combination.
-//   No data is logged. A persistent banner labels all familiarization activity.
-//   Participants may reduce the count to 0 in the setup form to skip entirely.
-//
-// ACTIVE LOGGING
-//   • After every trial: full session state written to localStorage (crash backup).
-//   • After every technique block (~90 trials): JSON file automatically downloaded.
-//   • On session completion: full session JSON + flat trajectory JSON downloaded.
-//   • A "Save Now" button is available throughout the study for manual backup.
-//
-// OUTPUT FILES
-//   P{N}_block{B}_{TECHNIQUE}.json  intermediate save per technique block
-//   P{N}_session.json               complete session on completion
-//   P{N}_trajectories.json          flat trial-level closure + trajectory log
-//
-// SESSION JSON SCHEMA
-//   sessionStart / sessionEnd    ISO timestamps
-//   participant                  integer
-//   latinSquareRow               participant % 3
-//   sequenceOrder                [technique, technique, technique] — actual order
-//   conditions[]                 27 condition objects
-//     .technique / .movement / .clustering
-//     .conditionIndex            0–26
-//     .techBlock                 1–3
-//     .condInBlock               1–9  (within-block randomised position)
-//     .conditionStart / End      ISO timestamps
-//     .conditionStats            aggregate stats (see STATS SCHEMA below)
-//     .trials[]                  TRIALS_PER_CONDITION trial objects
-//   sessionStats                 aggregate over all 270 trials
-//
-// TRIAL SCHEMA
-//   trialNumber            1-based within condition
-//   time_ms                onset-to-click duration
-//   errorClickCount        non-target clicks before acquisition
-//   clickX / clickY        click coordinates (px)
-//   targetX / targetY      target centroid at moment of click (px)
-//   targetRadius           target radius (px)
-//   distanceToCenter_px    Euclidean click-to-centroid distance
-//   normalizedDistance     distanceToCenter / radius
-//   clickedInsideTarget    boolean
-//   amplitude_px           distance from previous target centroid (null: trial 1)
-//   prevTargetX / Y        previous target centroid (null: trial 1)
-//   targetVx / Vy_px_per_s instantaneous velocity at click moment (finite diff)
-//   targetSpeed_px_per_s   velocity magnitude
-//   closureCurve           [{t_ms, dist_px}] sampled every ~10 ms
-//   normalizedTrajectory   [{t_ms, x, y, dist_px}] target-centred rotated frame;
-//                          null for trial 1 of each condition
-//
-// STATS SCHEMA
-//   avgTime_ms, medianTime_ms, stdDevTime_ms
-//   totalErrorClicks, avgErrorClicks
-//   avgDistanceFromCenter_px, medianDistanceFromCenter_px
-//   avgNormalizedDistance, medianNormalizedDistance
-//   clicksInsideTarget, clicksOutsideTarget, precisionRate_percent
-//   shannonEligibleTrials, shannonAvgID_bits
-//   throughput_shannon_bps, throughput_hoffmann_bps
-// =====================================================================
-
 "use strict";
 
 // =============================================================================
@@ -88,17 +6,16 @@
 
 var W = 600, H = 600;
 var MIN_RADIUS = 10, MAX_RADIUS = 30;
-var SPD_SLOW = 30, SPD_FAST = 80;
+var SPD_SLOW = 120, SPD_FAST = 120;
 var AREA_RADIUS = 50;
 var TRIALS_PER_CONDITION = 20;
 var FAM_TRIALS_DEFAULT   = 15;
 var LS_KEY = "cursorStudy_backup";
 
-// Latin square: row index = participantNumber % 3
 var LATIN_SQUARE = [
-    ["BUBBLE", "POINT",  "AREA"  ],   // row 0
-    ["POINT",  "AREA",   "BUBBLE"],   // row 1
-    ["AREA",   "BUBBLE", "POINT" ]    // row 2
+    ["BUBBLE", "POINT",  "AREA"  ],
+    ["POINT",  "AREA",   "BUBBLE"],
+    ["AREA",   "BUBBLE", "POINT" ]
 ];
 
 var CLUSTER_PARAMS = {
@@ -111,14 +28,15 @@ var CLUSTER_PARAMS = {
 // STATE MACHINE
 // =============================================================================
 //
-//  SETUP       setup form visible
-//  FAM_WAIT    between familiarisation trials (or before the first); click to proceed
-//  FAM_TRIAL   familiarisation trial active — no data logged
-//  FAM_DONE    all fam trials complete; click to begin recorded study
-//  COND_WAIT   interstitial before a condition starts; click to proceed
-//  TRIAL       main study trial active — data logged
-//  BLOCK_REST  technique-block boundary; data saved; click to continue
-//  DONE        session finished
+//  SETUP         setup form visible
+//  FAM_WAIT      between fam trials; click to proceed
+//  FAM_TRIAL     fam trial active — no data logged
+//  FAM_DONE      all fam trials complete; click to begin recorded study
+//  COND_WAIT     interstitial before a condition starts; click to proceed
+//  TRIAL_WAIT    interstitial BETWEEN individual trials; click to begin next
+//  TRIAL         main study trial active — data logged
+//  BLOCK_REST    technique-block boundary; data saved; click to continue
+//  DONE          session finished
 //
 var appState = "SETUP";
 
@@ -128,42 +46,34 @@ var appState = "SETUP";
 
 var svg = null;
 
-// Session metadata
 var participant;
 var famTrialsTotal;
 var famTrialsDone = 0;
 
-// Sequence
 var sessionSequence   = [];
 var conditionIndex    = 0;
 var trialsInCondition = 0;
 
-// Active condition
 var currentTechnique  = "POINT";
 var currentMovement   = "STATIC";
 var currentClustering = "MEDIUM";
 var numTargets        = 40;
 var minSep            = 20;
 
-// Trial state
 var targets          = [];
 var clickTarget      = -1;
 var prevTargetPos    = null;
 var trialStartTime   = 0;
 var trialErrorClicks = 0;
 
-// Animation
 var animFrame     = null;
 var lastFrameTime = null;
 
-// Mouse tracking
 var currentMousePos = [0, 0];
 
-// Trajectory sampling
 var sampleInterval = null;
 var trialSamples   = [];
 
-// Data structures
 var sessionData     = null;
 var currentCondData = null;
 var trajectoryLog   = [];
@@ -187,6 +97,7 @@ function shuffle(arr) {
 
 function r2(v) { return Math.round(v * 100)   / 100;  }
 function r3(v) { return Math.round(v * 1000)  / 1000; }
+function r4(v) { return Math.round(v * 10000) / 10000; }
 
 function arrayMean(arr) {
     if (!arr.length) return 0;
@@ -207,6 +118,38 @@ function median(arr) {
     var s = arr.slice().sort(function(a, b) { return a - b; });
     var m = Math.floor(s.length / 2);
     return s.length % 2 === 0 ? (s[m - 1] + s[m]) / 2 : s[m];
+}
+
+// Simple linear regression: returns { slope, intercept, r2, n }
+function linearRegression(xs, ys) {
+    var n = xs.length;
+    if (n < 2) return { slope: 0, intercept: 0, r2: 0, n: n };
+    var mx = arrayMean(xs), my = arrayMean(ys);
+    var ssxy = 0, ssxx = 0, ssyy = 0;
+    for (var i = 0; i < n; i++) {
+        ssxy += (xs[i] - mx) * (ys[i] - my);
+        ssxx += Math.pow(xs[i] - mx, 2);
+        ssyy += Math.pow(ys[i] - my, 2);
+    }
+    if (ssxx === 0 || ssyy === 0) return { slope: 0, intercept: 0, r2: 0, n: n };
+    var slope     = ssxy / ssxx;
+    var intercept = my - slope * mx;
+    var r2val     = Math.pow(ssxy / Math.sqrt(ssxx * ssyy), 2);
+    return { slope: r4(slope), intercept: r2(intercept), r2: r4(r2val), n: n };
+}
+
+// AIC for a simple linear regression model (assumes Gaussian residuals, 2 params)
+// AIC = n * ln(RSS/n) + 2*k   where k=2 (slope + intercept)
+function computeAIC(xs, ys, slope, intercept) {
+    var n = xs.length;
+    if (n < 3) return null;
+    var rss = 0;
+    for (var i = 0; i < n; i++) {
+        var resid = ys[i] - (slope * xs[i] + intercept);
+        rss += resid * resid;
+    }
+    if (rss === 0) return null;
+    return r2(n * Math.log(rss / n) + 2 * 2);
 }
 
 // =============================================================================
@@ -261,7 +204,7 @@ function applyCondition(cond) {
 }
 
 // =============================================================================
-// CATMULL-ROM SPLINE  (FAST movement)
+// CATMULL-ROM SPLINE
 // =============================================================================
 
 function catmullRomPos(p0, p1, p2, p3, t) {
@@ -297,19 +240,19 @@ function clampToBounds(pt, margin) {
 
 function initSplineState(startPos, rad) {
     var margin  = rad + 10;
-    var step    = 100 + Math.random() * 120;
+    var step    = 10 + Math.random() * 120;
     var heading = Math.random() * Math.PI * 2;
     var p0 = clampToBounds(
         [startPos[0] - Math.cos(heading) * step,
          startPos[1] - Math.sin(heading) * step], margin);
     var p1 = [startPos[0], startPos[1]];
     var turn1 = heading + (Math.random() - 0.5) * Math.PI * 2;
-    var step2 = 100 + Math.random() * 120;
+    var step2 = 10 + Math.random() * 120;
     var p2 = clampToBounds(
         [p1[0] + Math.cos(turn1) * step2,
          p1[1] + Math.sin(turn1) * step2], margin);
     var turn2 = turn1 + (Math.random() - 0.5) * Math.PI * 2;
-    var step3 = 100 + Math.random() * 120;
+    var step3 = 10 + Math.random() * 120;
     var p3 = clampToBounds(
         [p2[0] + Math.cos(turn2) * step3,
          p2[1] + Math.sin(turn2) * step3], margin);
@@ -435,7 +378,7 @@ function renderTargets() {
         .attr("cy",    function(d) { return d[0][1]; })
         .attr("r",     function(d) { return d[1] - 1; })
         .attr("stroke-width", 2).attr("stroke", "limegreen")
-        .attr("fill", "transparent");   // ← was "white"
+        .attr("fill", "transparent");
     updateTargetsFill(-1, clickTarget);
 }
 
@@ -458,6 +401,60 @@ function updateTargetsFill(capturedIdx, targetIdx) {
 function hideCursors() {
     svg.select(".cursorCircle").attr("r", 0);
     svg.select(".cursorMorphCircle").attr("cx", 0).attr("cy", 0).attr("r", 0);
+}
+
+// Render the interstitial "ready" overlay on the SVG canvas.
+// Shows a centred message with a grey dimming rect.
+function showTrialWaitOverlay(trialNum, totalTrials, lastTime_ms, lastErrors) {
+    svg.selectAll(".trialWaitOverlay").remove();
+
+    var g = svg.append("g").attr("class", "trialWaitOverlay");
+
+    g.append("rect")
+        .attr("x", 0).attr("y", 0)
+        .attr("width", W).attr("height", H)
+        .attr("fill", "#1a1a1a").attr("fill-opacity", 1);
+
+    g.append("rect")
+        .attr("x", W / 2 - 160).attr("y", H / 2 - 70)
+        .attr("width", 320).attr("height", 140)
+        .attr("rx", 10).attr("ry", 10)
+        .attr("fill", "#2d2d2d").attr("stroke", "#aaa").attr("stroke-width", 1.5);
+
+    g.append("text")
+        .attr("x", W / 2).attr("y", H / 2 - 32)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "15px")
+        .attr("fill", "#fff")
+        .attr("font-weight", "bold")
+        .text("Trial " + trialNum + " of " + totalTrials);
+
+    g.append("text")
+        .attr("x", W / 2).attr("y", H / 2 - 8)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "12px")
+        .attr("fill", "#ccc")
+        .text("Click anywhere to begin");
+
+    g.append("text")
+        .attr("x", W / 2).attr("y", H / 2 + 14)
+        .attr("text-anchor", "middle")
+        .attr("font-size", "11px")
+        .attr("fill", "#888")
+        .text(currentTechnique + " · " + currentMovement + " · " + currentClustering);
+
+    if (lastTime_ms !== null && lastTime_ms !== undefined) {
+        g.append("text")
+            .attr("x", W / 2).attr("y", H / 2 + 38)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "12px")
+            .attr("fill", "#4caf50")
+            .text("Last trial: " + (lastTime_ms / 1000).toFixed(2) + "s  |  errors: " + lastErrors);
+    }
+}
+
+function hideTrialWaitOverlay() {
+    svg.selectAll(".trialWaitOverlay").remove();
 }
 
 // =============================================================================
@@ -539,6 +536,10 @@ function shannonEligible(trials) {
     });
 }
 
+// ------------------------------------------------------------------
+// Shannon nominal throughput: W = 2r (no accuracy adjustment)
+// TP_shannon = mean(ID_i / MT_i)  where ID_i = log2(A/W + 1)
+// ------------------------------------------------------------------
 function computeShannonThroughput(trials) {
     if (!trials.length) return { avgID: 0, throughput: 0 };
     var tps = [], ids = [];
@@ -552,25 +553,151 @@ function computeShannonThroughput(trials) {
     return { avgID: r3(arrayMean(ids)), throughput: r2(arrayMean(tps)) };
 }
 
+// ------------------------------------------------------------------
+// ISO / accuracy-adjusted (effective) throughput
+//
+// We_i = 4.133 * sigma_x  where sigma_x is the SD of click offsets
+// projected onto the approach axis for trials sharing the same
+// (amplitude, radius) bin.  Because we have per-trial data with
+// varying amplitudes, we use the per-condition endpoint scatter:
+//
+//   sigma_x = SD of signed projections of (click - target_centroid)
+//             onto the A-vector (prevTarget → target) across all
+//             eligible trials in the condition.
+//
+// ID_e = log2(A / We + 1)   (clamped: We >= W * 0.05)
+// TP_e = mean(ID_e_i / MT_i)
+// ------------------------------------------------------------------
+function computeEffectiveThroughput(trials) {
+    if (!trials.length) return { avgIDe: 0, throughput: 0, We_px: 0 };
+
+    // Project each click error onto the approach axis
+    var projections = [];
+    for (var i = 0; i < trials.length; i++) {
+        var t = trials[i];
+        if (t.amplitude_px === null || t.amplitude_px <= 0 || t.prevTargetX === null) continue;
+        var ax = t.targetX - t.prevTargetX;
+        var ay = t.targetY - t.prevTargetY;
+        var len = Math.sqrt(ax * ax + ay * ay);
+        if (len === 0) continue;
+        var ux = ax / len, uy = ay / len;
+        var ex = t.clickX - t.targetX, ey = t.clickY - t.targetY;
+        projections.push(ex * ux + ey * uy);
+    }
+    if (projections.length < 2) return computeShannonThroughput(trials).throughput
+        ? { avgIDe: 0, throughput: computeShannonThroughput(trials).throughput, We_px: 0 }
+        : { avgIDe: 0, throughput: 0, We_px: 0 };
+
+    var sigma = arraySampleStdDev(projections);
+    var We    = 4.133 * sigma;
+
+    var tps = [], ids = [];
+    for (var i = 0; i < trials.length; i++) {
+        var t  = trials[i];
+        var MT = t.time_ms / 1000;
+        if (t.amplitude_px === null || t.amplitude_px <= 0 || MT <= 0) continue;
+        // Clamp We to at least 5% of nominal W so ID_e doesn't blow up
+        var W_nom = 2 * t.targetRadius;
+        var We_i  = Math.max(We, W_nom * 0.05);
+        var IDe   = Math.log2(t.amplitude_px / We_i + 1);
+        ids.push(IDe);
+        tps.push(IDe / MT);
+    }
+    return {
+        avgIDe:     r3(arrayMean(ids)),
+        throughput: r2(arrayMean(tps)),
+        We_px:      r2(We),
+        sigma_px:   r2(sigma)
+    };
+}
+
+// ------------------------------------------------------------------
+// Hoffmann velocity-corrected throughput
+// W_eff = W - |v_along| * MT   (clamped to 0.1 * W)
+// ------------------------------------------------------------------
 function computeHoffmannThroughput(trials) {
     if (!trials.length) return 0;
     var htps = [];
     for (var i = 0; i < trials.length; i++) {
         var t  = trials[i];
         var MT = t.time_ms / 1000, W_ = 2 * t.targetRadius;
+        if (t.amplitude_px === null || t.amplitude_px <= 0 || MT <= 0) continue;
         var dx = t.targetX - t.prevTargetX, dy = t.targetY - t.prevTargetY;
-        var len = Math.sqrt(dx*dx + dy*dy);
+        var len = Math.sqrt(dx * dx + dy * dy);
         var ux  = len > 0 ? dx / len : 1, uy = len > 0 ? dy / len : 0;
         var vt  = Math.abs(t.targetVx_px_per_s * ux + t.targetVy_px_per_s * uy);
         var W_eff = Math.max(W_ - vt * MT, W_ * 0.1);
         htps.push(Math.log2(t.amplitude_px / W_eff + 1) / MT);
     }
-    return arrayMean(htps);
+    return r2(arrayMean(htps));
+}
+
+// ------------------------------------------------------------------
+// Fitts' Law regression model stats for a set of trials
+// Fits MT = a + b * ID  (ID = log2(A/W+1), nominal W)
+// Returns r2, AIC, slope (b = 1/throughput from regression),
+// intercept (a), and n.
+// ------------------------------------------------------------------
+function computeFittsRegression(trials) {
+    var xs = [], ys = [];
+    for (var i = 0; i < trials.length; i++) {
+        var t = trials[i];
+        if (t.amplitude_px === null || t.amplitude_px <= 0) continue;
+        var W_ = 2 * t.targetRadius;
+        if (W_ <= 0) continue;
+        var ID = Math.log2(t.amplitude_px / W_ + 1);
+        xs.push(ID);
+        ys.push(t.time_ms);
+    }
+    if (xs.length < 3) return { slope: null, intercept: null, r2: null, aic: null, n: xs.length };
+    var reg = linearRegression(xs, ys);
+    var aic = computeAIC(xs, ys, reg.slope, reg.intercept);
+    return {
+        slope_ms_per_bit:     reg.slope,
+        intercept_ms:         reg.intercept,
+        r2:                   reg.r2,
+        aic:                  aic,
+        n:                    reg.n,
+        throughput_from_regression_bps: reg.slope > 0 ? r2(1000 / reg.slope) : null
+    };
+}
+
+// ------------------------------------------------------------------
+// Hoffmann regression: MT = a + b * ID_hoffmann
+// ------------------------------------------------------------------
+function computeHoffmannRegression(trials) {
+    var xs = [], ys = [];
+    for (var i = 0; i < trials.length; i++) {
+        var t  = trials[i];
+        if (t.amplitude_px === null || t.amplitude_px <= 0) continue;
+        var MT = t.time_ms / 1000;
+        var W_ = 2 * t.targetRadius;
+        if (W_ <= 0 || MT <= 0) continue;
+        var dx = t.targetX - t.prevTargetX, dy = t.targetY - t.prevTargetY;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        var ux  = len > 0 ? dx / len : 1, uy = len > 0 ? dy / len : 0;
+        var vt  = Math.abs(t.targetVx_px_per_s * ux + t.targetVy_px_per_s * uy);
+        var W_eff = Math.max(W_ - vt * MT, W_ * 0.1);
+        var IDh   = Math.log2(t.amplitude_px / W_eff + 1);
+        xs.push(IDh);
+        ys.push(t.time_ms);
+    }
+    if (xs.length < 3) return { slope: null, intercept: null, r2: null, aic: null, n: xs.length };
+    var reg = linearRegression(xs, ys);
+    var aic = computeAIC(xs, ys, reg.slope, reg.intercept);
+    return {
+        slope_ms_per_bit:     reg.slope,
+        intercept_ms:         reg.intercept,
+        r2:                   reg.r2,
+        aic:                  aic,
+        n:                    reg.n,
+        throughput_from_regression_bps: reg.slope > 0 ? r2(1000 / reg.slope) : null
+    };
 }
 
 function computeConditionStats(condData) {
     var trials = condData.trials;
-    var times = [], dists = [], normDists = [], errors = [];
+    var times = [], dists = [], normDists = [], errors = [], speeds = [];
     var inside = 0, outside = 0;
     var eligible = shannonEligible(trials);
 
@@ -580,30 +707,50 @@ function computeConditionStats(condData) {
         errors.push(t.errorClickCount);
         if (t.distanceToCenter_px !== null) dists.push(t.distanceToCenter_px);
         if (t.normalizedDistance  !== null) normDists.push(t.normalizedDistance);
+        if (t.targetSpeed_px_per_s !== undefined) speeds.push(t.targetSpeed_px_per_s);
         if (t.clickedInsideTarget) inside++; else outside++;
     }
 
     var sh    = computeShannonThroughput(eligible);
+    var eff   = computeEffectiveThroughput(eligible);
     var total = inside + outside;
+    var fReg  = computeFittsRegression(eligible);
+    var hReg  = computeHoffmannRegression(eligible);
 
     return {
-        totalTrials:                   trials.length,
-        avgTime_ms:                    r2(arrayMean(times)),
-        medianTime_ms:                 r2(median(times)),
-        stdDevTime_ms:                 r2(arraySampleStdDev(times)),
-        totalErrorClicks:              errors.reduce(function(a,b){return a+b;}, 0),
-        avgErrorClicks:                r2(arrayMean(errors)),
-        avgDistanceFromCenter_px:      r2(arrayMean(dists)),
-        medianDistanceFromCenter_px:   r2(median(dists)),
-        avgNormalizedDistance:         r3(arrayMean(normDists)),
-        medianNormalizedDistance:      r3(median(normDists)),
-        clicksInsideTarget:            inside,
-        clicksOutsideTarget:           outside,
-        precisionRate_percent:         r2(total > 0 ? (inside / total) * 100 : 0),
-        shannonEligibleTrials:         eligible.length,
-        shannonAvgID_bits:             sh.avgID,
-        throughput_shannon_bps:        sh.throughput,
-        throughput_hoffmann_bps:       r2(computeHoffmannThroughput(eligible))
+        totalTrials:                        trials.length,
+        avgTime_ms:                         r2(arrayMean(times)),
+        medianTime_ms:                      r2(median(times)),
+        stdDevTime_ms:                      r2(arraySampleStdDev(times)),
+        totalErrorClicks:                   errors.reduce(function(a,b){return a+b;}, 0),
+        avgErrorClicks:                     r2(arrayMean(errors)),
+        avgDistanceFromCenter_px:           r2(arrayMean(dists)),
+        medianDistanceFromCenter_px:        r2(median(dists)),
+        avgNormalizedDistance:              r3(arrayMean(normDists)),
+        medianNormalizedDistance:           r3(median(normDists)),
+        avgTargetSpeed_px_per_s:            r2(arrayMean(speeds)),
+        clicksInsideTarget:                 inside,
+        clicksOutsideTarget:                outside,
+        precisionRate_percent:              r2(total > 0 ? (inside / total) * 100 : 0),
+        shannonEligibleTrials:              eligible.length,
+        // --- Nominal Shannon (no accuracy adjustment) ---
+        shannonAvgID_bits:                  sh.avgID,
+        throughput_shannon_nominal_bps:     sh.throughput,
+        // --- ISO / accuracy-adjusted effective throughput ---
+        effectiveWidth_We_px:               eff.We_px,
+        endpointSigma_px:                   eff.sigma_px,
+        effectiveAvgID_bits:                eff.avgIDe,
+        throughput_shannon_effective_bps:   eff.throughput,
+        // --- Hoffmann velocity-corrected mean-of-means ---
+        throughput_hoffmann_bps:            computeHoffmannThroughput(eligible),
+        // --- Regression models (for Δr², ΔAIC hypothesis testing) ---
+        fitts_regression: fReg,
+        hoffmann_regression: hReg,
+        // --- Δ metrics between models ---
+        delta_r2_hoffmann_vs_shannon:       (fReg.r2 !== null && hReg.r2 !== null)
+                                                ? r4(hReg.r2 - fReg.r2) : null,
+        delta_aic_hoffmann_vs_shannon:      (fReg.aic !== null && hReg.aic !== null)
+                                                ? r2(hReg.aic - fReg.aic) : null
     };
 }
 
@@ -616,17 +763,45 @@ function computeSessionStats() {
     var stats = computeConditionStats({ trials: allTrials });
     stats.totalConditions = sessionData.conditions.length;
 
-    // Per-technique throughput summary
-    var techTP = {};
+    // Per-technique summary (all three throughput flavours)
+    var techBuckets = {};
+    // Per-movement summary
+    var moveBuckets = {};
+    // Per-technique × movement
+    var techMoveBuckets = {};
+
     for (var c = 0; c < sessionData.conditions.length; c++) {
         var cond = sessionData.conditions[c];
-        var tp   = cond.conditionStats.throughput_shannon_bps;
-        if (!techTP[cond.technique]) techTP[cond.technique] = [];
-        techTP[cond.technique].push(tp);
+        var cs   = cond.conditionStats;
+        var tech = cond.technique, move = cond.movement;
+        var tmKey = tech + "_" + move;
+
+        function pushBucket(bucket, key) {
+            if (!bucket[key]) bucket[key] = { shannon: [], effective: [], hoffmann: [] };
+            bucket[key].shannon.push(cs.throughput_shannon_nominal_bps);
+            bucket[key].effective.push(cs.throughput_shannon_effective_bps);
+            bucket[key].hoffmann.push(cs.throughput_hoffmann_bps);
+        }
+        pushBucket(techBuckets, tech);
+        pushBucket(moveBuckets, move);
+        pushBucket(techMoveBuckets, tmKey);
     }
-    stats.avgThroughputByTechnique = {};
-    for (var tech in techTP)
-        stats.avgThroughputByTechnique[tech] = r2(arrayMean(techTP[tech]));
+
+    function summariseBucket(bucket) {
+        var out = {};
+        for (var key in bucket) {
+            out[key] = {
+                throughput_shannon_nominal_bps:   r2(arrayMean(bucket[key].shannon)),
+                throughput_shannon_effective_bps: r2(arrayMean(bucket[key].effective)),
+                throughput_hoffmann_bps:          r2(arrayMean(bucket[key].hoffmann))
+            };
+        }
+        return out;
+    }
+
+    stats.avgThroughputByTechnique          = summariseBucket(techBuckets);
+    stats.avgThroughputByMovement           = summariseBucket(moveBuckets);
+    stats.avgThroughputByTechniqueMovement  = summariseBucket(techMoveBuckets);
 
     return stats;
 }
@@ -661,9 +836,6 @@ function stopSampling() {
     }
 }
 
-// Rotate cursor path into a target-centred frame where +x points toward
-// prevTarget, so all trajectories "arrive from the right" regardless of
-// on-screen orientation. Returns null for the first trial of each condition.
 function normalizeTrajectory(samples, targetPos, prevPos) {
     if (!prevPos || !samples.length) return null;
     var tx    = targetPos[0], ty = targetPos[1];
@@ -730,7 +902,6 @@ function logTrialData(trialTime, clickPos, targetPos, targetRad,
         normalizedTrajectory: normTraj
     });
 
-    // Write crash-recovery backup after every trial
     saveToLocalStorage();
 }
 
@@ -742,7 +913,7 @@ function saveToLocalStorage() {
             sessionData:    sessionData,
             currentCond:    currentCondData
         }));
-    } catch (e) { /* quota exceeded or unavailable — silently skip */ }
+    } catch (e) {}
 }
 
 // =============================================================================
@@ -755,19 +926,21 @@ var SESSION_README = {
     "_README_sequence":   "Technique block order: Latin square on participant%3. Within each block: 9 movement×clustering conditions in randomised order.",
     "_README_amplitude":  "amplitude_px and prevTarget: distance between successive target centroids, computed at moment of target assignment.",
     "_README_velocity":   "targetVx/Vy_px_per_s: finite-difference velocity at click moment. For FAST targets this reflects the Catmull-Rom spline tangent.",
-    "_README_shannon":    "throughput_shannon_bps: ID=log2(A/W+1) where W=2r; TP=ID/MT averaged over eligible trials.",
-    "_README_hoffmann":   "throughput_hoffmann_bps: ID=log2(A/W_eff+1)/MT where W_eff=W−|v_along|·MT, clamped to 0.1·W.",
+    "_README_shannon_nom":"throughput_shannon_nominal_bps: ID=log2(A/W+1) where W=2r (nominal, no accuracy adjustment); TP=mean(ID/MT) over eligible trials.",
+    "_README_shannon_eff":"throughput_shannon_effective_bps: ISO-style accuracy-adjusted TP. We=4.133*sigma where sigma=SD of endpoint projections onto approach axis; ID_e=log2(A/We+1); TP_e=mean(ID_e/MT).",
+    "_README_hoffmann":   "throughput_hoffmann_bps: ID=log2(A/W_eff+1)/MT where W_eff=W−|v_along|·MT, clamped to 0.1·W. Mean-of-means.",
+    "_README_regression": "fitts_regression / hoffmann_regression: OLS fit of MT ~ ID for each model. Reports slope (ms/bit), intercept (ms), r², AIC, n, and throughput_from_regression_bps (=1000/slope). Use delta_r2 and delta_aic for H2b/H2c hypothesis testing.",
     "_README_eligible":   "Trial 1 of each condition excluded from throughput calculations (no predecessor amplitude).",
-    "_README_closure":    "closureCurve: [{t_ms, dist_px}] ~10 ms samples from onset to click. Target position is live for moving conditions.",
+    "_README_trialWait":  "Each trial is preceded by an interstitial click-to-start screen; the target field is regenerated fresh for every trial. Timing begins only on the click that dismisses the interstitial.",
+    "_README_closure":    "closureCurve: [{t_ms, dist_px}] ~10 ms samples from trial onset to click.",
     "_README_trajectory": "normalizedTrajectory: [{t_ms, x, y, dist_px}] in target-centred frame rotated so +x points toward prevTarget. null for trial 1."
 };
 
 var TRAJECTORY_README = {
     "_README_format":      "Flat trial-level log. One object per completed trial across the full session.",
-    "_README_closure":     "closureCurve: [{t_ms, dist_px}] ~10 ms samples. For moving targets the target position is updated live at each sample.",
+    "_README_closure":     "closureCurve: [{t_ms, dist_px}] ~10 ms samples.",
     "_README_trajectory":  "normalizedTrajectory: [{t_ms, x, y, dist_px}] rotated frame. null for trial 1 of each condition.",
-    "_README_aggregation": "Group by (technique, movement, clustering). Bin closureCurve on t_ms (nearest 10 ms) and average dist_px. " +
-                           "Overlay normalizedTrajectory polylines at ~0.05 opacity for density visualisation."
+    "_README_aggregation": "Group by (technique, movement, clustering). Bin closureCurve on t_ms and average dist_px."
 };
 
 function saveJSON(data, filename) {
@@ -778,7 +951,6 @@ function saveJSON(data, filename) {
     saveAs(blob, filename);
 }
 
-// Called automatically at the end of each technique block (~90 trials).
 function saveTechBlock(techName, blockNum) {
     var blockConditions = sessionData.conditions.filter(function(c) {
         return c.techBlock === blockNum;
@@ -794,7 +966,6 @@ function saveTechBlock(techName, blockNum) {
     saveJSON(out, "P" + participant + "_block" + blockNum + "_" + techName + ".json");
 }
 
-// Called at session completion.
 function saveFullSession() {
     sessionData.sessionEnd   = new Date().toISOString();
     sessionData.sessionStats = computeSessionStats();
@@ -806,7 +977,6 @@ function saveFullSession() {
     saveJSON(trajOut, "P" + participant + "_trajectories.json");
 }
 
-// Manual save — can be triggered at any time via the "Save Now" button.
 function saveNow() {
     if (!sessionData) return;
     var snapshot = Object.assign({}, SESSION_README, {
@@ -830,7 +1000,6 @@ function initSVG() {
         .attr("width", W).attr("height", H)
         .attr("fill", "white").attr("stroke", "#333");
 
-    // Status lines (bottom-left area)
     svg.append("text").attr("class", "statusA").attr("x", 20).attr("y", 22)
         .attr("font-size", "13px").text("");
     svg.append("text").attr("class", "statusB").attr("x", 20).attr("y", 40)
@@ -838,7 +1007,6 @@ function initSVG() {
     svg.append("text").attr("class", "statusC").attr("x", 20).attr("y", 58)
         .attr("font-size", "12px").attr("fill", "#666").text("");
 
-    // Familiarisation banner along the bottom edge
     svg.append("text").attr("class", "famBanner")
         .attr("x", W / 2).attr("y", H - 12)
         .attr("text-anchor", "middle")
@@ -846,7 +1014,6 @@ function initSVG() {
         .attr("fill", "#c06000")
         .attr("font-weight", "bold").text("");
 
-    // Top-right: trial counter and condition label
     svg.append("text").attr("class", "trialCounter")
         .attr("x", W - 12).attr("y", 20)
         .attr("text-anchor", "end")
@@ -857,7 +1024,6 @@ function initSVG() {
         .attr("text-anchor", "end")
         .attr("font-size", "11px").attr("fill", "#555").text("");
 
-    // Cursor overlays
     svg.append("circle").attr("class", "cursorCircle")
         .attr("cx", 0).attr("cy", 0).attr("r", 0)
         .attr("fill", "lightgray").attr("fill-opacity", "0.5")
@@ -1003,21 +1169,58 @@ function goCondWait() {
     };
 }
 
-// Initialises the target set once for the whole condition and starts trial 1.
+// Called when the COND_WAIT interstitial is clicked —
+// records condition start time and immediately shows the
+// TRIAL_WAIT interstitial for trial 1 (no trial is live yet).
 function startCondition() {
     currentCondData.conditionStart = new Date().toISOString();
-    appState         = "TRIAL";
     prevTargetPos    = null;
     trialErrorClicks = 0;
-    targets          = initTargets();
-    clickTarget      = Math.floor(Math.random() * targets.length);
+
+    goTrialWait();
+}
+
+// Show the per-trial interstitial.  Regenerates the target field
+// each time so every trial starts fresh.
+function goTrialWait() {
+    appState = "TRIAL_WAIT";
+    stopAnimation();
+    stopSampling();
+
+    // Regenerate the target set for this trial
+    targets     = initTargets();
+    clickTarget = Math.floor(Math.random() * targets.length);
+
+    // Render targets underneath the overlay so the participant can
+    // see the layout before clicking (reduces spatial surprise).
     renderTargets();
+
+    var nextTrialNum = trialsInCondition + 1;
+
+
+    var lastTrial = currentCondData && currentCondData.trials.length > 0
+        ? currentCondData.trials[currentCondData.trials.length - 1]
+        : null;
+    showTrialWaitOverlay(
+        nextTrialNum, TRIALS_PER_CONDITION,
+        lastTrial ? lastTrial.time_ms   : null,
+        lastTrial ? lastTrial.errorClickCount : null
+    );
+
     setStatus("", "", "");
     setTopRight(
-        "Trial 1/" + TRIALS_PER_CONDITION + "  Cond " + (conditionIndex + 1) + "/27",
+        "Trial " + nextTrialNum + "/" + TRIALS_PER_CONDITION +
+            "  Cond " + (conditionIndex + 1) + "/27",
         currentTechnique + " / " + currentMovement + " / " + currentClustering
     );
-    trialStartTime = new Date().getTime();
+}
+
+// Dismiss the interstitial and begin timing the live trial.
+function startTrialFromWait() {
+    hideTrialWaitOverlay();
+    appState       = "TRIAL";
+    trialErrorClicks = 0;
+    trialStartTime = new Date().getTime();   // ← timing starts HERE
     startSampling();
     ensureAnimation();
 }
@@ -1025,6 +1228,7 @@ function startCondition() {
 function onTrialSuccess(clickPos) {
     var trialTime = new Date().getTime() - trialStartTime;
     stopSampling();
+    stopAnimation();
 
     var closureCurve = trialSamples.map(function(s) {
         return { t_ms: s.t_ms, dist_px: s.dist_px };
@@ -1051,22 +1255,13 @@ function onTrialSuccess(clickPos) {
     prevTargetPos    = [targets[clickTarget][0][0], targets[clickTarget][0][1]];
     trialErrorClicks = 0;
 
+    svg.selectAll(".targetCircles").remove();
+    hideCursors();
+
     if (trialsInCondition >= TRIALS_PER_CONDITION) {
         completeCondition();
     } else {
-        // Same target set — pick a new highlighted target
-        var newTarget = clickTarget;
-        while (newTarget === clickTarget && targets.length > 1)
-            newTarget = Math.floor(Math.random() * targets.length);
-        clickTarget = newTarget;
-        updateTargetsFill(-1, clickTarget);
-        setTopRight(
-            "Trial " + (trialsInCondition + 1) + "/" + TRIALS_PER_CONDITION +
-                "  Cond " + (conditionIndex + 1) + "/27",
-            currentTechnique + " / " + currentMovement + " / " + currentClustering
-        );
-        trialStartTime = new Date().getTime();
-        startSampling();
+        goTrialWait();
     }
 }
 
@@ -1081,7 +1276,6 @@ function completeCondition() {
     hideCursors();
     stopAnimation();
 
-    // Block boundary: every 9 conditions (indices 8, 17, 26)
     var isBlockEnd = (conditionIndex % 9 === 8);
     conditionIndex++;
 
@@ -1122,7 +1316,6 @@ function goSessionDone() {
     setTopRight("", "");
     setFamBanner("");
 
-    // Show restart button
     d3.select("#saveNowBtn").style("display", "none");
     d3.select("#canvas").append("button")
         .style("position", "relative").style("display", "block")
@@ -1176,6 +1369,11 @@ function onClick() {
             startCondition();
             break;
 
+        // ── NEW: per-trial interstitial ──────────────────────────────────
+        case "TRIAL_WAIT":
+            startTrialFromWait();
+            break;
+
         case "BLOCK_REST":
             goCondWait();
             break;
@@ -1227,7 +1425,6 @@ function animate(timestamp) {
             if (currentMovement === "FAST") {
                 advanceSplineTarget(targets[i], dt);
             } else {
-                // SLOW: linear bounce
                 p[0] += v[0] * dt; p[1] += v[1] * dt;
                 var m = r + 6;
                 if (p[0] < m)     { p[0] = m;     v[0] =  Math.abs(v[0]); }
