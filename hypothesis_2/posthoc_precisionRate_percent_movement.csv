@@ -1,0 +1,4 @@
+dv,effect,Contrast,A,B,Paired,Parametric,T,dof,alternative,p_unc,p_corr,p_adjust,BF10,hedges
+precisionRate_percent,movement,movement,STATIC,SLOW,True,True,3.71306951805398,2.0,two-sided,0.06548806058919196,0.19646418176757588,bonf,2.172,0.4300723187008362
+precisionRate_percent,movement,movement,STATIC,FAST,True,True,12.15903389513974,2.0,two-sided,0.006696110553470642,0.020088331660411924,bonf,7.914,0.87848530102976
+precisionRate_percent,movement,movement,SLOW,FAST,True,True,2.277979189805996,2.0,two-sided,0.15040920951425374,0.4512276285427612,bonf,1.284,0.35239740532305874

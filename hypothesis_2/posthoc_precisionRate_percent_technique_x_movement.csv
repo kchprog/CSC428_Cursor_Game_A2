@@ -1,0 +1,16 @@
+dv,effect,Contrast,technique,A,B,Paired,Parametric,T,dof,alternative,p_unc,p_corr,p_adjust,BF10,hedges
+precisionRate_percent,technique * movement,technique,-,BUBBLE,POINT,True,True,-3.1023504279381124,2.0,two-sided,0.09008201122037192,0.27024603366111577,bonf,1.782,-2.0264468138009093
+precisionRate_percent,technique * movement,technique,-,BUBBLE,AREA,True,True,-3.4603122594564506,2.0,two-sided,0.07432478222407479,0.22297434667222438,bonf,2.009,-1.0780875788956947
+precisionRate_percent,technique * movement,technique,-,POINT,AREA,True,True,2.379679573122029,2.0,two-sided,0.14034812305930158,0.4210443691779048,bonf,1.343,1.55440018812615
+precisionRate_percent,technique * movement,movement,-,STATIC,SLOW,True,True,3.713069518053964,2.0,two-sided,0.06548806058919247,0.1964641817675774,bonf,2.172,0.43007231870083845
+precisionRate_percent,technique * movement,movement,-,STATIC,FAST,True,True,12.159033895139668,2.0,two-sided,0.0066961105534707206,0.020088331660412163,bonf,7.914,0.8784853010297623
+precisionRate_percent,technique * movement,movement,-,SLOW,FAST,True,True,2.277979189805985,2.0,two-sided,0.15040920951425485,0.45122762854276455,bonf,1.284,0.35239740532305763
+precisionRate_percent,technique * movement,technique * movement,BUBBLE,STATIC,SLOW,True,True,3.714285714285711,2.0,two-sided,0.06544929890353383,0.392695793421203,bonf,2.172,0.5919946580604711
+precisionRate_percent,technique * movement,technique * movement,BUBBLE,STATIC,FAST,True,True,14.00000000000001,2.0,two-sided,0.005063323673817966,0.030379942042907795,bonf,9.183,1.028866075271161
+precisionRate_percent,technique * movement,technique * movement,BUBBLE,SLOW,FAST,True,True,3.999999999999994,2.0,two-sided,0.057190958417936796,0.34314575050762075,bonf,2.358,0.351113460510978
+precisionRate_percent,technique * movement,technique * movement,POINT,STATIC,SLOW,True,True,,2.0,two-sided,,,bonf,nan,
+precisionRate_percent,technique * movement,technique * movement,POINT,STATIC,FAST,True,True,,2.0,two-sided,,,bonf,nan,
+precisionRate_percent,technique * movement,technique * movement,POINT,SLOW,FAST,True,True,,2.0,two-sided,,,bonf,nan,
+precisionRate_percent,technique * movement,technique * movement,AREA,STATIC,SLOW,True,True,0.8660254037844382,2.0,two-sided,0.4777670321329067,1.0,bonf,0.615,0.1244342033676503
+precisionRate_percent,technique * movement,technique * movement,AREA,STATIC,FAST,True,True,1.5714285714285716,2.0,two-sided,0.2566888837605654,1.0,bonf,0.906,0.5080682368868698
+precisionRate_percent,technique * movement,technique * movement,AREA,SLOW,FAST,True,True,1.2199885626608382,2.0,two-sided,0.34680273525781885,1.0,bonf,0.746,0.32040075156592557

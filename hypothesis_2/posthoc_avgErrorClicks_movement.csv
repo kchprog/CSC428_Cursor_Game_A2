@@ -1,0 +1,4 @@
+dv,effect,Contrast,A,B,Paired,Parametric,T,dof,alternative,p_unc,p_corr,p_adjust,BF10,hedges
+avgErrorClicks,movement,movement,STATIC,SLOW,True,True,-2.6849865294947217,2.0,two-sided,0.11522615687699679,0.3456784706309904,bonf,1.525,-0.9588290453125256
+avgErrorClicks,movement,movement,STATIC,FAST,True,True,-6.230543486016893,2.0,two-sided,0.024805652157347133,0.0744169564720414,bonf,3.85,-1.9760109957866316
+avgErrorClicks,movement,movement,SLOW,FAST,True,True,-4.326457216268166,2.0,two-sided,0.04949136423351386,0.14847409270054157,bonf,2.573,-0.8071966492525218

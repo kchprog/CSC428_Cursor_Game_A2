@@ -1,0 +1,4 @@
+,throughput_shannon_nominal_bps,throughput_shannon_effective_bps,throughput_hoffmann_bps
+throughput_shannon_nominal_bps,1.0,0.841,0.7052
+throughput_shannon_effective_bps,0.841,1.0,0.4267
+throughput_hoffmann_bps,0.7052,0.4267,1.0

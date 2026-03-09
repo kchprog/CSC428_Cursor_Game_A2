@@ -1,0 +1,12 @@
+hypothesis,condition,n,r2,r,p,slope_ms_per_bit,intercept_ms,tp_bps,H2a1_supported,value,n_conditions,mean_fitts_r2,mean_hoffmann_r2,mean_delta_r2,t_paired_r2,p_paired_r2,cohen_d_r2,hoffmann_better_than_fitts,H2b0_supported,H2b1_supported,mean_daic,t_vs_0,p_vs_0,sig,hoffmann_preferred_aic,H2b0_aic_supported,H2c0_retained,H2c1_supported,H2c0_aic_retained,mean_daic_SLOW,mean_daic_FAST,t,mean_SLOW,mean_FAST
+H2a_static_regression,BUBBLE,168.0,0.0157,0.1253,0.105603,50.56,620.89,19.778,False,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,POINT,171.0,0.0737,0.2714,0.000329,71.05,587.32,14.075,False,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,AREA,168.0,0.0433,0.208,0.006818,79.64,582.86,12.556,False,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,ALL,507.0,0.0365,0.191,1.5e-05,67.52,595.61,14.81,False,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,_condition_level_mean_r2_STATIC,,,,,,,,,0.1517,,,,,,,,,,,,,,,,,,,,,,,,
+H2b_hoffmann_vs_shannon_slow,r2_comparison_SLOW,,,,,,,,,,27.0,0.1205,0.1041,-0.0164,-1.393,0.1755,-0.268,False,False,True,,,,,,,,,,,,,,
+H2b_hoffmann_vs_shannon_slow,aic_comparison_SLOW,,,,,,,,,,,,,,,,,,,,0.437,1.591,0.1238,False,False,False,,,,,,,,
+H2c_random_walk,r2_comparison_FAST,,,,,,,,,,27.0,0.0996,0.0958,-0.0038,-0.257,0.7991,-0.049,,,,,,,,,,True,False,,,,,,
+H2c_random_walk,aic_comparison_FAST,,,,,,,,,,,,,,,,,,,,0.101,0.31,0.7591,,,,,,True,,,,,
+H2c_random_walk,daic_SLOW_vs_FAST,,,,0.4361,,,,,,,,,,,,,,,,,,,False,,,,,,0.437,0.101,0.785,,
+H2c_random_walk,fitts_r2_SLOW_vs_FAST,,,,0.4617,,,,,,,,,,,,,,,,,,,False,,,,,,,,0.742,0.1205,0.0996

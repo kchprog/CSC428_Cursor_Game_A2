@@ -1,0 +1,57 @@
+dv,source,eps,sphericity_violated,correction_applied
+throughput_shannon_nominal_bps,technique,0.5932,True,True
+throughput_shannon_nominal_bps,movement,0.6308,True,True
+throughput_shannon_nominal_bps,clustering,0.539,True,True
+throughput_shannon_nominal_bps,technique * movement,0.3742,True,True
+throughput_shannon_nominal_bps,technique * clustering,0.3197,True,True
+throughput_shannon_nominal_bps,movement * clustering,0.34,True,True
+throughput_shannon_nominal_bps,technique * movement * clustering,0.2017,True,True
+throughput_shannon_effective_bps,technique,0.5165,True,True
+throughput_shannon_effective_bps,movement,0.6946,True,True
+throughput_shannon_effective_bps,clustering,0.5825,True,True
+throughput_shannon_effective_bps,technique * movement,0.3588,True,True
+throughput_shannon_effective_bps,technique * clustering,0.3009,True,True
+throughput_shannon_effective_bps,movement * clustering,0.4046,True,True
+throughput_shannon_effective_bps,technique * movement * clustering,0.209,True,True
+throughput_hoffmann_bps,technique,0.5773,True,True
+throughput_hoffmann_bps,movement,0.5449,True,True
+throughput_hoffmann_bps,clustering,0.5141,True,True
+throughput_hoffmann_bps,technique * movement,0.3146,True,True
+throughput_hoffmann_bps,technique * clustering,0.2968,True,True
+throughput_hoffmann_bps,movement * clustering,0.2801,True,True
+throughput_hoffmann_bps,technique * movement * clustering,0.1617,True,True
+avgTime_ms,technique,0.5192,True,True
+avgTime_ms,movement,0.5027,True,True
+avgTime_ms,clustering,0.5002,True,True
+avgTime_ms,technique * movement,0.261,True,True
+avgTime_ms,technique * clustering,0.2597,True,True
+avgTime_ms,movement * clustering,0.2514,True,True
+avgTime_ms,technique * movement * clustering,0.1305,True,True
+precisionRate_percent,technique,0.5407,True,True
+precisionRate_percent,movement,0.589,True,True
+precisionRate_percent,clustering,0.5,True,True
+precisionRate_percent,technique * movement,0.3185,True,True
+precisionRate_percent,technique * clustering,0.2703,True,True
+precisionRate_percent,movement * clustering,0.2945,True,True
+precisionRate_percent,technique * movement * clustering,0.1592,True,True
+avgErrorClicks,technique,0.501,True,True
+avgErrorClicks,movement,0.8469,True,True
+avgErrorClicks,clustering,0.5266,True,True
+avgErrorClicks,technique * movement,0.4243,True,True
+avgErrorClicks,technique * clustering,0.2638,True,True
+avgErrorClicks,movement * clustering,0.4459,True,True
+avgErrorClicks,technique * movement * clustering,0.2234,True,True
+avgNormalizedDistance,technique,0.5489,True,True
+avgNormalizedDistance,movement,0.5093,True,True
+avgNormalizedDistance,clustering,0.5063,True,True
+avgNormalizedDistance,technique * movement,0.2795,True,True
+avgNormalizedDistance,technique * clustering,0.2779,True,True
+avgNormalizedDistance,movement * clustering,0.2579,True,True
+avgNormalizedDistance,technique * movement * clustering,0.1415,True,True
+avgDistanceFromCenter_px,technique,0.5586,True,True
+avgDistanceFromCenter_px,movement,0.5076,True,True
+avgDistanceFromCenter_px,clustering,0.516,True,True
+avgDistanceFromCenter_px,technique * movement,0.2835,True,True
+avgDistanceFromCenter_px,technique * clustering,0.2882,True,True
+avgDistanceFromCenter_px,movement * clustering,0.2619,True,True
+avgDistanceFromCenter_px,technique * movement * clustering,0.1463,True,True
