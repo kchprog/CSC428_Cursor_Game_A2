@@ -1,0 +1,4 @@
+dv,effect,Contrast,A,B,Paired,Parametric,T,dof,alternative,p_unc,p_corr,p_adjust,BF10,hedges
+throughput_shannon_effective_bps,movement,movement,STATIC,SLOW,True,True,4.596858635153691,2.0,two-sided,0.04420904166423107,0.13262712499269322,bonf,2.752,0.9018943788146979
+throughput_shannon_effective_bps,movement,movement,STATIC,FAST,True,True,4.732556327936243,2.0,two-sided,0.041864827858072565,0.1255944835742177,bonf,2.842,1.1451024704986452
+throughput_shannon_effective_bps,movement,movement,SLOW,FAST,True,True,1.5995514352426283,2.0,two-sided,0.25082350393391817,0.7524705118017545,bonf,0.92,0.16497283909263583

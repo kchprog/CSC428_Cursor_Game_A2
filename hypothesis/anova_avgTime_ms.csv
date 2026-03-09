@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+avgTime_ms,technique,3.1777,2.0,4.0,0.1492,0.6137,0.5192,0.2133
+avgTime_ms,movement,2.4368,2.0,4.0,0.2032,0.5492,0.5027,0.2586
+avgTime_ms,clustering,12.7981,2.0,4.0,0.0183,0.8648,0.5002,0.07
+avgTime_ms,technique * movement,2.8409,4.0,8.0,0.0975,0.5869,0.261,0.2305
+avgTime_ms,technique * clustering,0.4653,4.0,8.0,0.7602,0.1887,0.2597,0.5703
+avgTime_ms,movement * clustering,1.23,4.0,8.0,0.3709,0.3808,0.2514,0.383
+avgTime_ms,technique * movement * clustering,1.9472,8.0,16.0,0.1221,0.4933,0.1305,0.2957

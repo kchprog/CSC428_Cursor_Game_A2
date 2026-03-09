@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+avgNormalizedDistance,technique,4.2716,2.0,4.0,0.1017,0.6811,0.5489,0.1652
+avgNormalizedDistance,movement,10.1787,2.0,4.0,0.027,0.8358,0.5093,0.0839
+avgNormalizedDistance,clustering,4.4085,2.0,4.0,0.0974,0.6879,0.5063,0.1693
+avgNormalizedDistance,technique * movement,6.7061,4.0,8.0,0.0114,0.7703,0.2795,0.1102
+avgNormalizedDistance,technique * clustering,1.2154,4.0,8.0,0.376,0.378,0.2779,0.3861
+avgNormalizedDistance,movement * clustering,1.1168,4.0,8.0,0.4125,0.3583,0.2579,0.402
+avgNormalizedDistance,technique * movement * clustering,9.0865,8.0,16.0,0.0001,0.8196,0.1415,0.0817

@@ -1,0 +1,3 @@
+metric,n_conditions,mean,sd,median,t_vs_0,p_t,W_wilcoxon,p_wilcoxon,sig_at_05
+Δr²,81,-0.0067,0.0562,0.0,-1.078,0.2843,612.5,0.263,False
+ΔAIC,81,0.1795,1.2802,0.0,1.262,0.2106,560.5,0.2419,False

@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+throughput_hoffmann_bps,technique,2.1071,2.0,4.0,0.2371,0.513,0.5773,0.2758
+throughput_hoffmann_bps,movement,6.2169,2.0,4.0,0.0592,0.7566,0.5449,0.1209
+throughput_hoffmann_bps,clustering,8.2165,2.0,4.0,0.0383,0.8042,0.5141,0.1002
+throughput_hoffmann_bps,technique * movement,3.3067,4.0,8.0,0.0705,0.6231,0.3146,0.1894
+throughput_hoffmann_bps,technique * clustering,1.2701,4.0,8.0,0.3573,0.3884,0.2968,0.3772
+throughput_hoffmann_bps,movement * clustering,0.9754,4.0,8.0,0.4718,0.3278,0.2801,0.4317
+throughput_hoffmann_bps,technique * movement * clustering,3.1895,8.0,16.0,0.0231,0.6146,0.1617,0.1926

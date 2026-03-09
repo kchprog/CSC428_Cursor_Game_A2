@@ -1,0 +1,57 @@
+dv,dv_label,source,partial_eta2,p_GG_corr,sig,effect_size_label
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),technique,0.464,0.3128,False,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),movement,0.9075,0.0299,True,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),clustering,0.7894,0.1034,False,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),technique * movement,0.5292,0.2454,False,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),technique * clustering,0.3331,0.4311,False,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),movement * clustering,0.2485,0.5287,False,large
+throughput_shannon_nominal_bps,TP Shannon Nominal (bits/s),technique * movement * clustering,0.4421,0.3206,False,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),technique,0.0126,0.8935,False,small
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),movement,0.9066,0.0243,True,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),clustering,0.2758,0.4854,False,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),technique * movement,0.2436,0.5397,False,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),technique * clustering,0.163,0.623,False,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),movement * clustering,0.5127,0.2539,False,large
+throughput_shannon_effective_bps,TP Shannon Effective (bits/s),technique * movement * clustering,0.4251,0.3366,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),technique,0.513,0.2758,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),movement,0.7566,0.1209,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),clustering,0.8042,0.1002,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),technique * movement,0.6231,0.1894,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),technique * clustering,0.3884,0.3772,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),movement * clustering,0.3278,0.4317,False,large
+throughput_hoffmann_bps,TP Hoffmann (bits/s),technique * movement * clustering,0.6146,0.1926,False,large
+avgTime_ms,Mean MT (ms),technique,0.6137,0.2133,False,large
+avgTime_ms,Mean MT (ms),movement,0.5492,0.2586,False,large
+avgTime_ms,Mean MT (ms),clustering,0.8648,0.07,False,large
+avgTime_ms,Mean MT (ms),technique * movement,0.5869,0.2305,False,large
+avgTime_ms,Mean MT (ms),technique * clustering,0.1887,0.5703,False,large
+avgTime_ms,Mean MT (ms),movement * clustering,0.3808,0.383,False,large
+avgTime_ms,Mean MT (ms),technique * movement * clustering,0.4933,0.2957,False,large
+precisionRate_percent,Precision Rate (%),technique,0.8241,0.084,False,large
+precisionRate_percent,Precision Rate (%),movement,0.9171,0.0304,True,large
+precisionRate_percent,Precision Rate (%),clustering,0.8898,0.0567,False,large
+precisionRate_percent,Precision Rate (%),technique * movement,0.8663,0.0473,True,large
+precisionRate_percent,Precision Rate (%),technique * clustering,0.7926,0.1013,False,large
+precisionRate_percent,Precision Rate (%),movement * clustering,0.4239,0.3463,False,large
+precisionRate_percent,Precision Rate (%),technique * movement * clustering,0.722,0.1244,False,large
+avgErrorClicks,Mean Error Clicks,technique,0.8082,0.1008,False,large
+avgErrorClicks,Mean Error Clicks,movement,0.9123,0.0131,True,large
+avgErrorClicks,Mean Error Clicks,clustering,0.6693,0.1768,False,large
+avgErrorClicks,Mean Error Clicks,technique * movement,0.6938,0.111,False,large
+avgErrorClicks,Mean Error Clicks,technique * clustering,0.4063,0.3623,False,large
+avgErrorClicks,Mean Error Clicks,movement * clustering,0.6623,0.1262,False,large
+avgErrorClicks,Mean Error Clicks,technique * movement * clustering,0.2856,0.5029,False,large
+avgNormalizedDistance,Mean Normalised Distance,technique,0.6811,0.1652,False,large
+avgNormalizedDistance,Mean Normalised Distance,movement,0.8358,0.0839,False,large
+avgNormalizedDistance,Mean Normalised Distance,clustering,0.6879,0.1693,False,large
+avgNormalizedDistance,Mean Normalised Distance,technique * movement,0.7703,0.1102,False,large
+avgNormalizedDistance,Mean Normalised Distance,technique * clustering,0.378,0.3861,False,large
+avgNormalizedDistance,Mean Normalised Distance,movement * clustering,0.3583,0.402,False,large
+avgNormalizedDistance,Mean Normalised Distance,technique * movement * clustering,0.8196,0.0817,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),technique,0.6592,0.1772,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),movement,0.8572,0.0726,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),clustering,0.6618,0.1834,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),technique * movement,0.7582,0.1156,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),technique * clustering,0.2865,0.4737,False,large
+avgDistanceFromCenter_px,Mean Distance to Centre (px),movement * clustering,0.1209,0.6602,False,medium
+avgDistanceFromCenter_px,Mean Distance to Centre (px),technique * movement * clustering,0.6371,0.1869,False,large

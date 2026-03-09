@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+throughput_shannon_effective_bps,technique,0.0255,2.0,4.0,0.975,0.0126,0.5165,0.8935
+throughput_shannon_effective_bps,movement,19.4187,2.0,4.0,0.0087,0.9066,0.6946,0.0243
+throughput_shannon_effective_bps,clustering,0.7618,2.0,4.0,0.5244,0.2758,0.5825,0.4854
+throughput_shannon_effective_bps,technique * movement,0.6441,4.0,8.0,0.6463,0.2436,0.3588,0.5397
+throughput_shannon_effective_bps,technique * clustering,0.3894,4.0,8.0,0.8108,0.163,0.3009,0.623
+throughput_shannon_effective_bps,movement * clustering,2.104,4.0,8.0,0.1721,0.5127,0.4046,0.2539
+throughput_shannon_effective_bps,technique * movement * clustering,1.4789,8.0,16.0,0.2401,0.4251,0.209,0.3366

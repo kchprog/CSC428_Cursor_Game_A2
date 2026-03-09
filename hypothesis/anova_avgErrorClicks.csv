@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+avgErrorClicks,technique,8.4271,2.0,4.0,0.0368,0.8082,0.501,0.1008
+avgErrorClicks,movement,20.803,2.0,4.0,0.0077,0.9123,0.8469,0.0131
+avgErrorClicks,clustering,4.0473,2.0,4.0,0.1094,0.6693,0.5266,0.1768
+avgErrorClicks,technique * movement,4.5319,4.0,8.0,0.0332,0.6938,0.4243,0.111
+avgErrorClicks,technique * clustering,1.3689,4.0,8.0,0.3261,0.4063,0.2638,0.3623
+avgErrorClicks,movement * clustering,3.9232,4.0,8.0,0.0474,0.6623,0.4459,0.1262
+avgErrorClicks,technique * movement * clustering,0.7997,8.0,16.0,0.6116,0.2856,0.2234,0.5029

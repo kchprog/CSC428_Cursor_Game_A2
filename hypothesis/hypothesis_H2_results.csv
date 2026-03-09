@@ -1,0 +1,12 @@
+hypothesis,condition,n,r2,r,p,slope_ms_per_bit,intercept_ms,tp_bps,H2a1_supported,value,n_conditions,mean_fitts_r2,mean_hoffmann_r2,mean_delta_r2,t_paired_r2,p_paired_r2,cohen_d_r2,hoffmann_better_than_fitts,H2b0_supported,H2b1_supported,note,mean_daic,t_vs_0,p_vs_0,sig,hoffmann_preferred_aic,H2b0_aic_supported,H2c0_retained,H2c1_supported,H2c0_aic_retained,mean_daic_SLOW,mean_daic_FAST,t,mean_SLOW,mean_FAST
+H2a_static_regression,BUBBLE,171.0,0.0143,0.1194,0.119695,47.93,632.27,20.863,False,,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,POINT,171.0,0.0737,0.2714,0.000329,71.05,587.32,14.075,False,,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,AREA,171.0,0.0416,0.204,0.007448,80.99,589.65,12.347,False,,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,ALL,513.0,0.0348,0.1864,2.1e-05,66.92,602.23,14.944,False,,,,,,,,,,,,,,,,,,,,,,,,,,
+H2a_static_regression,_condition_level_mean_r2_STATIC,,,,,,,,,0.1517,,,,,,,,,,,,,,,,,,,,,,,,,
+H2b_hoffmann_vs_shannon_slow,r2_comparison_SLOW,,,,,,,,,,27.0,0.1205,0.1041,-0.0164,-1.393,0.1755,-0.268,False,False,True,H2b0: Hoffmann r² > Shannon r² under SLOW motion; supported when t significant AND Hoffmann direction positive,,,,,,,,,,,,,,
+H2b_hoffmann_vs_shannon_slow,aic_comparison_SLOW,,,,,,,,,,,,,,,,,,,,Negative ΔAIC = Hoffmann preferred by AIC; corroborates H2b0,0.437,1.591,0.1238,False,False,False,,,,,,,,
+H2c_random_walk,r2_comparison_FAST,,,,,,,,,,27.0,0.0996,0.0958,-0.0038,-0.257,0.7991,-0.049,,,,H2c0: retain if p >= .05; consistent with no directional velocity advantage available in random walk,,,,,,,True,False,,,,,,
+H2c_random_walk,aic_comparison_FAST,,,,,,,,,,,,,,,,,,,,H2c0 corroborated by AIC if p >= .05 (ΔAIC indistinguishable from 0),0.101,0.31,0.7591,,,,,,True,,,,,
+H2c_random_walk,daic_SLOW_vs_FAST,,,,0.4361,,,,,,,,,,,,,,,,Context: Hoffmann advantage (ΔAIC < 0) stronger under SLOW than FAST?,,,,False,,,,,,0.437,0.101,0.785,,
+H2c_random_walk,fitts_r2_SLOW_vs_FAST,,,,0.4617,,,,,,,,,,,,,,,,Context: Fitts model fit degrades from SLOW to FAST (both models affected),,,,False,,,,,,,,0.742,0.1205,0.0996

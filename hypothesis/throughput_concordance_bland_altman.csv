@@ -1,0 +1,4 @@
+pair,pearson_r,p_pearson,mean_diff,sd_diff,loa_lower,loa_upper
+TP-Shannon-Nominal vs TP-Shannon-Effective,0.841,0.0,0.242,0.7053,-1.1404,1.6243
+TP-Shannon-Nominal vs TP-Hoffmann,0.7052,0.0,-1.8237,1.5216,-4.8061,1.1587
+TP-Shannon-Effective vs TP-Hoffmann,0.4267,7.1e-05,-2.0657,1.933,-5.8543,1.7229

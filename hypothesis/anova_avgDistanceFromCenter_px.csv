@@ -1,0 +1,8 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+avgDistanceFromCenter_px,technique,3.8691,2.0,4.0,0.1161,0.6592,0.5586,0.1772
+avgDistanceFromCenter_px,movement,12.0096,2.0,4.0,0.0204,0.8572,0.5076,0.0726
+avgDistanceFromCenter_px,clustering,3.9143,2.0,4.0,0.1144,0.6618,0.516,0.1834
+avgDistanceFromCenter_px,technique * movement,6.2721,4.0,8.0,0.0138,0.7582,0.2835,0.1156
+avgDistanceFromCenter_px,technique * clustering,0.8029,4.0,8.0,0.5563,0.2865,0.2882,0.4737
+avgDistanceFromCenter_px,movement * clustering,0.275,4.0,8.0,0.8861,0.1209,0.2619,0.6602
+avgDistanceFromCenter_px,technique * movement * clustering,3.5114,8.0,16.0,0.0156,0.6371,0.1463,0.1869

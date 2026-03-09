@@ -1,0 +1,57 @@
+dv,Source,F,ddof1,ddof2,p-unc,np2,eps,p-GG-corr
+throughput_shannon_nominal_bps,technique,1.7317,2.0,4.0,0.2872,0.464,0.5932,0.3128
+throughput_shannon_nominal_bps,movement,19.6121,2.0,4.0,0.0086,0.9075,0.6308,0.0299
+throughput_shannon_nominal_bps,clustering,7.4947,2.0,4.0,0.0444,0.7894,0.539,0.1034
+throughput_shannon_nominal_bps,technique * movement,2.2482,4.0,8.0,0.1531,0.5292,0.3742,0.2454
+throughput_shannon_nominal_bps,technique * clustering,0.9991,4.0,8.0,0.4613,0.3331,0.3197,0.4311
+throughput_shannon_nominal_bps,movement * clustering,0.6612,4.0,8.0,0.636,0.2485,0.34,0.5287
+throughput_shannon_nominal_bps,technique * movement * clustering,1.5848,8.0,16.0,0.206,0.4421,0.2017,0.3206
+throughput_shannon_effective_bps,technique,0.0255,2.0,4.0,0.975,0.0126,0.5165,0.8935
+throughput_shannon_effective_bps,movement,19.4187,2.0,4.0,0.0087,0.9066,0.6946,0.0243
+throughput_shannon_effective_bps,clustering,0.7618,2.0,4.0,0.5244,0.2758,0.5825,0.4854
+throughput_shannon_effective_bps,technique * movement,0.6441,4.0,8.0,0.6463,0.2436,0.3588,0.5397
+throughput_shannon_effective_bps,technique * clustering,0.3894,4.0,8.0,0.8108,0.163,0.3009,0.623
+throughput_shannon_effective_bps,movement * clustering,2.104,4.0,8.0,0.1721,0.5127,0.4046,0.2539
+throughput_shannon_effective_bps,technique * movement * clustering,1.4789,8.0,16.0,0.2401,0.4251,0.209,0.3366
+throughput_hoffmann_bps,technique,2.1071,2.0,4.0,0.2371,0.513,0.5773,0.2758
+throughput_hoffmann_bps,movement,6.2169,2.0,4.0,0.0592,0.7566,0.5449,0.1209
+throughput_hoffmann_bps,clustering,8.2165,2.0,4.0,0.0383,0.8042,0.5141,0.1002
+throughput_hoffmann_bps,technique * movement,3.3067,4.0,8.0,0.0705,0.6231,0.3146,0.1894
+throughput_hoffmann_bps,technique * clustering,1.2701,4.0,8.0,0.3573,0.3884,0.2968,0.3772
+throughput_hoffmann_bps,movement * clustering,0.9754,4.0,8.0,0.4718,0.3278,0.2801,0.4317
+throughput_hoffmann_bps,technique * movement * clustering,3.1895,8.0,16.0,0.0231,0.6146,0.1617,0.1926
+avgTime_ms,technique,3.1777,2.0,4.0,0.1492,0.6137,0.5192,0.2133
+avgTime_ms,movement,2.4368,2.0,4.0,0.2032,0.5492,0.5027,0.2586
+avgTime_ms,clustering,12.7981,2.0,4.0,0.0183,0.8648,0.5002,0.07
+avgTime_ms,technique * movement,2.8409,4.0,8.0,0.0975,0.5869,0.261,0.2305
+avgTime_ms,technique * clustering,0.4653,4.0,8.0,0.7602,0.1887,0.2597,0.5703
+avgTime_ms,movement * clustering,1.23,4.0,8.0,0.3709,0.3808,0.2514,0.383
+avgTime_ms,technique * movement * clustering,1.9472,8.0,16.0,0.1221,0.4933,0.1305,0.2957
+precisionRate_percent,technique,9.37,2.0,4.0,0.0309,0.8241,0.5407,0.084
+precisionRate_percent,movement,22.1257,2.0,4.0,0.0069,0.9171,0.589,0.0304
+precisionRate_percent,clustering,16.148,2.0,4.0,0.0121,0.8898,0.5,0.0567
+precisionRate_percent,technique * movement,12.9563,4.0,8.0,0.0014,0.8663,0.3185,0.0473
+precisionRate_percent,technique * clustering,7.6429,4.0,8.0,0.0077,0.7926,0.2703,0.1013
+precisionRate_percent,movement * clustering,1.4718,4.0,8.0,0.2969,0.4239,0.2945,0.3463
+precisionRate_percent,technique * movement * clustering,5.1932,8.0,16.0,0.0025,0.722,0.1592,0.1244
+avgErrorClicks,technique,8.4271,2.0,4.0,0.0368,0.8082,0.501,0.1008
+avgErrorClicks,movement,20.803,2.0,4.0,0.0077,0.9123,0.8469,0.0131
+avgErrorClicks,clustering,4.0473,2.0,4.0,0.1094,0.6693,0.5266,0.1768
+avgErrorClicks,technique * movement,4.5319,4.0,8.0,0.0332,0.6938,0.4243,0.111
+avgErrorClicks,technique * clustering,1.3689,4.0,8.0,0.3261,0.4063,0.2638,0.3623
+avgErrorClicks,movement * clustering,3.9232,4.0,8.0,0.0474,0.6623,0.4459,0.1262
+avgErrorClicks,technique * movement * clustering,0.7997,8.0,16.0,0.6116,0.2856,0.2234,0.5029
+avgNormalizedDistance,technique,4.2716,2.0,4.0,0.1017,0.6811,0.5489,0.1652
+avgNormalizedDistance,movement,10.1787,2.0,4.0,0.027,0.8358,0.5093,0.0839
+avgNormalizedDistance,clustering,4.4085,2.0,4.0,0.0974,0.6879,0.5063,0.1693
+avgNormalizedDistance,technique * movement,6.7061,4.0,8.0,0.0114,0.7703,0.2795,0.1102
+avgNormalizedDistance,technique * clustering,1.2154,4.0,8.0,0.376,0.378,0.2779,0.3861
+avgNormalizedDistance,movement * clustering,1.1168,4.0,8.0,0.4125,0.3583,0.2579,0.402
+avgNormalizedDistance,technique * movement * clustering,9.0865,8.0,16.0,0.0001,0.8196,0.1415,0.0817
+avgDistanceFromCenter_px,technique,3.8691,2.0,4.0,0.1161,0.6592,0.5586,0.1772
+avgDistanceFromCenter_px,movement,12.0096,2.0,4.0,0.0204,0.8572,0.5076,0.0726
+avgDistanceFromCenter_px,clustering,3.9143,2.0,4.0,0.1144,0.6618,0.516,0.1834
+avgDistanceFromCenter_px,technique * movement,6.2721,4.0,8.0,0.0138,0.7582,0.2835,0.1156
+avgDistanceFromCenter_px,technique * clustering,0.8029,4.0,8.0,0.5563,0.2865,0.2882,0.4737
+avgDistanceFromCenter_px,movement * clustering,0.275,4.0,8.0,0.8861,0.1209,0.2619,0.6602
+avgDistanceFromCenter_px,technique * movement * clustering,3.5114,8.0,16.0,0.0156,0.6371,0.1463,0.1869
